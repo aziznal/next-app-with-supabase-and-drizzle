@@ -30,18 +30,18 @@ export default function Header({ initialSession }: HeaderProps) {
   return (
     <div className="w-full bg-white flex justify-between px-4 lg:px-52 items-center h-[80px] shadow-gray-400 shadow-md sticky top-0 shrink-0">
       <div className="flex gap-4">
-        <Link href="/">
-          <Button variant="link">Home</Button>
+        <Link href="/" >
+          <Button variant="link" tabIndex={-1}>Home</Button>
         </Link>
       </div>
 
       <div className="flex gap-4">
         <Link href="/login">
-          <Button variant="outline">Login</Button>
+          <Button variant="outline" tabIndex={-1}>Login</Button>
         </Link>
 
         <Link href="/register">
-          <Button>Register</Button>
+          <Button tabIndex={-1}>Register</Button>
         </Link>
       </div>
     </div>

@@ -11,34 +11,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 import { Loader } from "lucide-react";
-
-const registerSchema = z
-  .object({
-    email: z.string().email(),
-    password: z.string().min(8, {
-      message: "Password must be at least 8 characters long",
-    }),
-    confirmPassword: z.string().min(8, {
-      message: "Password must be at least 8 characters long",
-    }),
-  })
-  .superRefine((data, ctx) => {
-    if (data.password !== data.confirmPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      });
-    }
-  });
-
-type RegisterForm = z.infer<typeof registerSchema>;
+import {
+  RegisterForm,
+  registerSchema,
+} from "@/app/api/(auth)/_schemas/register-schema";
+import { RegisterResponse } from "@/app/api/(auth)/register/route";
 
 export default function RegisterPage() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -52,8 +34,33 @@ export default function RegisterPage() {
     },
   });
 
-  const onSubmit = (formValues: RegisterForm) => {
+  const onSubmit = async (formValues: RegisterForm) => {
     setHasSubmitted(true);
+
+    try {
+      const result = await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify({ ...formValues }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(async (res) => (await res.json()) as RegisterResponse);
+
+      console.log(result);
+
+      if (result._type === "success") {
+        console.log(result.data);
+        location.reload();
+      }
+
+      if (result._type === "error") {
+        console.log(result.errorMessage);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setHasSubmitted(false);
   };
 
   return (

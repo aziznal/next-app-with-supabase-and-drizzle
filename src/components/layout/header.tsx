@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { getCustomClientComponentClient } from "@/server/supabase/client-utils";
 import type { Session } from "@supabase/supabase-js";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export type HeaderProps = {
@@ -13,7 +12,6 @@ export type HeaderProps = {
 
 export default function Header({ initialSession }: HeaderProps) {
   const supabase = getCustomClientComponentClient();
-  const router = useRouter();
 
   const [currentSession, setCurrentSession] = useState(initialSession);
 
@@ -53,7 +51,12 @@ export default function Header({ initialSession }: HeaderProps) {
         )}
 
         {currentSession && (
-          <>
+          <div className="flex items-center gap-4">
+          <div>
+            <span className="text-gray-400">logged in as:{' '}</span>
+            <span>{currentSession.user?.email}</span>
+          </div>
+
             <Button
               onClick={() => {
                 supabase.auth.signOut().then(() => location.reload());
@@ -61,7 +64,7 @@ export default function Header({ initialSession }: HeaderProps) {
             >
               Logout
             </Button>
-          </>
+          </div>
         )}
       </div>
     </div>
